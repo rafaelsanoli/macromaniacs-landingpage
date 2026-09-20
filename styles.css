@@ -1,0 +1,821 @@
+/* ==========================================================================
+   MacroManiacs — landing page
+   Implemented from Figma: "MM LANDING PAGE" (node 0:1757)
+   Canvas 1440px. Decorative slabs/bands are reproduced with CSS geometry
+   (clip-path + rotation) so they stay crisp and full-bleed at any width.
+   ========================================================================== */
+
+:root {
+  /* Surfaces */
+  --dark:          #101010;
+  --grey:          #292929;
+  --purple-deep:   #6F2EB7;  /* hero slab */
+  --purple:        #9558D7;  /* CTA background */
+  --card:          #3A2251;  /* testimonial card */
+
+  /* Decorative bands */
+  --band-light:    #D5A3FC;
+  --band-mid:      #A180CA;
+  --band-deep:     #AA62B5;
+
+  /* Neutrals */
+  --n200:          #E5E7EB;
+  --n300:          #D1D5DB;
+
+  /* Layout */
+  --canvas:        1440px;
+  --gutter:        112px;
+
+  /* Extra bottom bezel on the phone renders, as a share of device height so it
+     scales with each phone (0% = exactly as Figma) */
+  --screen-chin:   0.75%;
+
+  /* Band geometry: slope 52.517 / 420 => 7.1248deg; 64px vertical thickness */
+  --band-angle:    -7.1248deg;
+  --band-depth:    63.51px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: #fff;
+  color: #000;
+  font-family: Inter, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img { display: block; max-width: 100%; }
+
+h1, h2, h3, p, figure, blockquote { margin: 0; }
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a { color: inherit; text-decoration: none; }
+
+a:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid var(--band-light);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Shared primitives
+   -------------------------------------------------------------------------- */
+
+.shell {
+  width: 100%;
+  max-width: var(--canvas);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: center;
+  white-space: nowrap;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+.btn--light {
+  background: #fff;
+  color: var(--dark);
+}
+
+.btn--light:hover {
+  background: var(--n200);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -4px rgba(16, 16, 16, .35);
+}
+
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 800px;
+  max-width: 100%;
+  text-align: center;
+}
+
+.section-heading--left {
+  width: auto;
+  text-align: left;
+}
+
+.section-heading__title {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 60px;
+  letter-spacing: -1.2px;
+}
+
+.section-heading__desc {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+/* Phone renders: the frame PNG with the app screenshot layered inside.
+   The screen inset is the same ratio for every device in the file. */
+.device__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* The app screenshots are exported cropped tight at the bottom — the nav bar sits
+   flush against the image edge with no safe-area strip. `--screen-chin` trims a
+   few px off the screen so a little more bezel shows and the phone reads as
+   finished rather than cut off. Set it to 0 to match Figma's geometry exactly. */
+.device__screen {
+  position: absolute;
+  left: 4.0623%;
+  top: 1.6258%;
+  width: 91.8063%;
+  height: calc(96.7194% - var(--screen-chin));
+  border-radius: 19.27% / 8.87%; /* the asset's own corner radius */
+  background: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  min-height: 866px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Purple slab: M0 0 H1440 V572 L0 752 Z */
+.slab {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 752px;
+  background: var(--purple-deep);
+  clip-path: polygon(0 0, 100% 0, 100% 76.0638%, 0 100%);
+}
+
+.band {
+  position: absolute;
+  height: var(--band-depth);
+  transform: rotate(var(--band-angle));
+}
+
+/* Bands anchored on the edge that is visible inside the canvas, then run
+   off-screen the other way so they always bleed past the viewport. */
+.band--r3,
+.band--r2,
+.band--r1 { transform-origin: left center; }
+
+.band--l1,
+.band--l2 { transform-origin: right center; }
+
+.band--r3 {
+  left: calc(50% + 540px);
+  top: 594.25px;
+  width: 1400px;
+  background: var(--band-light);
+}
+
+.band--r2 {
+  left: calc(50% + 108px);
+  top: 585.05px;
+  width: 1400px;
+  background: var(--band-mid);
+}
+
+/* Both ends of this one sit inside the canvas — keep its exact width. */
+.band--r1 {
+  left: calc(50% + 268px);
+  top: 500.76px;
+  width: 420px;
+  background: var(--band-deep);
+}
+
+.band--l1 {
+  right: calc(50% + 300px);
+  top: 635.74px;
+  width: 1400px;
+  background: var(--band-deep);
+}
+
+.band--l2 {
+  right: calc(50% + 452px);
+  top: 718.73px;
+  width: 1400px;
+  background: var(--band-light);
+}
+
+/* Navbar */
+.navbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  width: 100%;
+  max-width: var(--canvas);
+  height: 80px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+/* Wordmark is 1000x129 (trimmed from the 6000x6000 source). Every usage pins the
+   artwork's ratio so flex-shrink can never squash it. */
+.logo { flex: none; }
+
+.logo img {
+  width: 222px;
+  height: auto;
+  aspect-ratio: 1000 / 129;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav__item {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  color: var(--n200);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.nav__item:hover { color: #fff; }
+
+/* Hero body */
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--canvas);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.hero__content {
+  width: 648px;
+  max-width: 100%;
+  padding-top: 168px; /* 248px from section top, minus the 80px navbar */
+}
+
+.hero__title {
+  color: #fff;
+  font-size: 60px;
+  font-weight: 700;
+  line-height: 72px;
+  letter-spacing: -1.5px;
+}
+
+.hero__lead {
+  margin-top: 16px;
+  color: var(--n300);
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.hero__ctas {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.hero__note {
+  margin-top: 12px;
+  color: var(--n300);
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.hero__device {
+  position: absolute;
+  top: 33px; /* 113px from the section top, minus the 80px navbar above this block */
+  left: calc(50% + 140px);
+  width: 332px;
+  height: 684.8144px;
+}
+
+/* --------------------------------------------------------------------------
+   Features
+   -------------------------------------------------------------------------- */
+
+.features {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  padding: 96px var(--gutter);
+  background: #fff;
+}
+
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 384px);
+  align-items: center;
+  gap: 64px 30px;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.feature__icon {
+  display: block;
+  flex: none;
+  width: var(--icon-size, 48px);
+  height: var(--icon-size, 48px);
+  overflow: hidden;
+}
+
+.feature__icon img {
+  width: 100%;
+  height: 100%;
+}
+
+.feature__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding-inline: 16px;
+  text-align: center;
+}
+
+.feature__title {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 40px;
+}
+
+.feature__desc {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Testimonials
+   -------------------------------------------------------------------------- */
+
+.testimonials {
+  position: relative;
+  background: var(--grey);
+  overflow: hidden;
+}
+
+.testimonials__stage {
+  position: relative;
+  width: 100%;
+  max-width: var(--canvas);
+  height: 892px;
+  margin-inline: auto;
+}
+
+.testimonials__quote {
+  position: absolute;
+  left: var(--gutter);
+  top: 64px;
+  width: 142px;
+  height: 116px;
+}
+
+.testimonials__heading {
+  position: absolute;
+  left: calc(var(--gutter) + 104px);
+  top: 120px;
+  width: 488px;
+}
+
+.testimonials__heading .section-heading__title { color: #fff; }
+.testimonials__heading .section-heading__desc  { color: var(--n200); }
+
+.quote-card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 32px;
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow:
+    0 4px 8px -2px rgba(17, 24, 39, .1),
+    0 2px 4px -2px rgba(17, 24, 39, .06);
+}
+
+.quote-card--a { right: calc(50% + 16px); top: 340px; width: 384px; }
+.quote-card--b { left:  calc(50% + 16px); top: 540px; width: 384px; }
+.quote-card--c { left:  calc(50% + 16px); top: 196px; width: 488px; }
+
+.quote-card__logo {
+  width: 222px;
+  height: auto;
+  aspect-ratio: 1000 / 129;
+}
+
+.quote-card__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.quote-card__mark {
+  flex: none;
+  width: 16px;
+  height: 13px;
+}
+
+.quote-card__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.quote-card blockquote {
+  color: var(--n200);
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.quote-card__person {
+  display: flex;
+  flex-direction: column;
+}
+
+.quote-card__name {
+  color: var(--n200);
+  font-size: 18px;
+  line-height: 28px;
+}
+
+.quote-card__name--strong { font-weight: 700; }
+
+.quote-card__role {
+  color: var(--n300);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   CTA
+   -------------------------------------------------------------------------- */
+
+.cta { background: var(--purple); }
+
+.cta__inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: var(--canvas);
+  height: 558px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.cta__content {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 48px;
+  width: 592px;
+  max-width: 100%;
+}
+
+.cta__content .section-heading__title { color: #fff; }
+.cta__content .section-heading__desc  { color: var(--n200); }
+
+.get-app {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.get-app__label {
+  color: var(--n200);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 28px;
+}
+
+.get-app__badges {
+  display: flex;
+  gap: 12px;
+}
+
+.store-badge {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 135px;
+  height: 40px;
+  overflow: hidden;
+}
+
+.store-badge__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.store-badge__logo,
+.store-badge__text { position: absolute; }
+
+.store-badge__logo--gplay {
+  left: 7.38%;
+  top: 17.83%;
+  width: 17.11%;
+  height: 64.35%;
+}
+
+.store-badge__text--gplay {
+  left: 30.4%;
+  top: 17.16%;
+  width: 62.8%;
+  height: 68.03%;
+}
+
+.store-badge__logo--appstore {
+  left: 13.33%;
+  top: 21.8%;
+  width: 13.13%;
+  height: 54.44%;
+}
+
+.store-badge__text--appstore {
+  left: 31.45%;
+  top: 21.09%;
+  width: 55.6%;
+  height: 62.64%;
+}
+
+.cta__image {
+  position: relative;
+  flex: 0 1 592px;
+  width: 592px;
+  aspect-ratio: 592 / 558;
+  overflow: hidden;
+}
+
+.cta-device { position: absolute; }
+
+.cta-device--back {
+  left: 5.2365%;
+  top: -26.5233%;
+  width: 43.75%;
+  height: 95.7415%;
+}
+
+.cta-device--front {
+  left: 51.6892%;
+  top: 27.4194%;
+  width: 44.1917%;
+  height: 96.708%;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  justify-content: center;
+  padding: 64px var(--gutter);
+  background: #fff;
+}
+
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.footer__logo img {
+  width: 343px;
+  height: auto;
+  aspect-ratio: 1000 / 129;
+}
+
+.footer__links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.footer__links a:hover { text-decoration: underline; }
+
+.footer__copy {
+  min-height: 25px; /* matches the text box in the design */
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive — the design is a 1440px desktop canvas; below that the fixed
+   compositions unwind into flow layout.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1280px) {
+  :root { --gutter: 56px; }
+
+  .hero__content { width: 560px; }
+
+  .hero__device {
+    left: auto;
+    right: 24px;
+    width: 288px;
+    height: 594.06px; /* 288 * (684.8144 / 332) */
+  }
+
+  .features__grid { grid-template-columns: repeat(3, minmax(0, 384px)); }
+
+  .testimonials__heading { left: calc(var(--gutter) + 104px); }
+}
+
+@media (max-width: 1024px) {
+  :root { --gutter: 32px; }
+
+  .only-lg { display: none; }
+
+  .section-heading__title { font-size: 40px; line-height: 50px; letter-spacing: -1px; }
+
+  .features__grid { grid-template-columns: repeat(2, minmax(0, 384px)); }
+
+  /* Hero stacks: copy first, device below */
+  .hero { min-height: 0; }
+
+  .hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    padding-bottom: 96px;
+  }
+
+  .hero__content {
+    width: 100%;
+    max-width: 648px;
+    padding-top: 72px;
+  }
+
+  .hero__title { font-size: 48px; line-height: 58px; letter-spacing: -1.2px; }
+
+  .hero__device {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 300px;
+    height: 618.8px; /* 300 * (684.8144 / 332) */
+  }
+
+  .slab { height: 100%; clip-path: none; }
+
+  .band { display: none; }
+
+  /* Testimonials unwind into a column */
+  .testimonials__stage {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    height: auto;
+    padding: 64px var(--gutter);
+  }
+
+  .testimonials__quote {
+    position: relative;
+    left: auto;
+    top: auto;
+  }
+
+  .testimonials__heading {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    margin-top: -48px;
+  }
+
+  .quote-card {
+    position: relative;
+    right: auto;
+    left: auto;
+    top: auto;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* CTA stacks */
+  .cta__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding-block: 72px;
+  }
+
+  .cta__image {
+    flex: none;
+    width: 100%;
+    max-width: 592px;
+    margin-inline: auto;
+    margin-top: 40px;
+  }
+
+  .cta-device--back { top: -12%; }
+  .cta-device--front { top: 14%; }
+
+  .footer { justify-content: flex-start; }
+}
+
+@media (max-width: 700px) {
+  :root { --gutter: 24px; }
+
+  .navbar { height: 72px; }
+
+  .navbar .nav { display: none; }
+
+  .logo img { width: 140px; }
+
+  .hero__title { font-size: 36px; line-height: 44px; letter-spacing: -0.8px; }
+
+  .hero__lead,
+  .hero__note,
+  .get-app__label,
+  .section-heading__desc { font-size: 16px; line-height: 26px; }
+
+  .section-heading__title { font-size: 32px; line-height: 40px; letter-spacing: -0.6px; }
+
+  .features { padding-block: 64px; gap: 48px; }
+
+  .features__grid { grid-template-columns: minmax(0, 384px); gap: 48px; }
+
+  .feature__title { font-size: 26px; line-height: 34px; }
+
+  .quote-card { padding: 24px; }
+
+  .quote-card__logo { width: 180px; }
+
+  .testimonials__quote { width: 104px; height: 85px; }
+
+  .testimonials__heading { margin-top: -32px; }
+
+  .footer__logo img { width: 260px; }
+
+  .footer__links { flex-wrap: wrap; gap: 16px 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .btn { transition: none; }
+  .btn--light:hover { transform: none; }
+}

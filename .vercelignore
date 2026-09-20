@@ -1,0 +1,5 @@
+# Full-size brand originals — versioned in git, but not needed by the site
+assets/source/
+
+# Local dev server config
+.claude/
