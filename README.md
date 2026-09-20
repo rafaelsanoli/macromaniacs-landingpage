@@ -31,6 +31,12 @@ optimized derivatives, regenerated with `sharp`:
 | --- | --- | --- |
 | `img/logo-macromaniacs.png` | `Logo tipog.png` | trimmed 6000x6000 → 5367x695 of actual art, scaled to 1000x129 — 1.2 MB → 15 KB |
 | `favicon-32.png`, `favicon-192.png`, `apple-touch-icon.png` | `Logo.png` | 2.9 MB → 1.7 / 20.5 / 18.8 KB |
+| `img/cta-screen-2.png` | `perfil-grupo.svg` | screen layer extracted from the SVG — 1.47 MB → 683 KB |
+
+`perfil-grupo.svg` was delivered as a whole phone: a 1611x3323 wrapper holding two
+embedded PNGs — a frame byte-identical to `phone-frame.png`, and the 1479x3214
+screen. Only the screen layer is used, so the frame stays a single shared file
+across all three devices and `--screen-chin` still applies.
 
 The wordmark's ratio is 7.75:1 (the previous Figma logo was 5.05:1), so it sits
 lower than the old mark at the same width. Widths were kept at the design's
