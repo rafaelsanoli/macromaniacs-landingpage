@@ -163,7 +163,9 @@ a:focus-visible,
 
 .hero {
   position: relative;
-  min-height: 866px;
+  /* 866px as designed; above ~2560px wide the slab's low corner would other-
+     wise reach past the section and get clipped flat by the overflow. */
+  min-height: max(866px, calc(706px + 6.25vw));
   background: #fff;
   overflow: hidden;
 }
@@ -174,15 +176,28 @@ a:focus-visible,
   z-index: 0;
 }
 
-/* Purple slab: M0 0 H1440 V572 L0 752 Z */
+/* Purple slab: M0 0 H1440 V572 L0 752 Z
+   The bottom edge must stay parallel to the bands (7.1248deg) at ANY width, so
+   it is anchored to the centre — y=662px there — and drops 0.125px per px out
+   to each side (0.125 * 50vw = 6.25vw). A percentage clip-path would instead
+   spread the 180px drop across the whole viewport and flatten the angle. */
 .slab {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 752px;
+  /* 100vw (not 100%) so the clip-path's vw maths and the element's own width
+     agree — 100% excludes the scrollbar and would skew the angle slightly.
+     Centred so its midpoint lines up with the bands' centre anchor. */
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  height: calc(672px + 6.25vw);
   background: var(--purple-deep);
-  clip-path: polygon(0 0, 100% 0, 100% 76.0638%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(662px - 6.25vw),
+    0 calc(662px + 6.25vw)
+  );
 }
 
 .band {

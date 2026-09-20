@@ -58,6 +58,14 @@ Total 3561px on the 1440px canvas — matches the design exactly.
   which a fixed-width SVG export could not do. Each band is anchored on
   whichever edge is visible inside the canvas and runs off-screen the other way;
   `--band-r1` has both ends inside the canvas so it keeps its exact 420px width.
+- **The slab's angle is locked in `vw`, not percentages.** Its bottom edge has to
+  stay parallel to the bands at every width, so it is anchored to the centre
+  (y=662px there) and drops `6.25vw` to each side — `12.5vw / 100vw` = exactly
+  the bands' 0.125 slope. A percentage clip-path spreads the 180px drop across
+  the whole viewport instead, which flattens the edge to 5.4deg at 1920px wide
+  and visibly breaks the composition. The slab is `100vw` wide and centred (not
+  `100%`) so the clip-path's `vw` maths and the element's own width agree —
+  `100%` excludes the scrollbar and skews the angle by ~0.07deg.
 - **Two layers from the design are intentionally omitted** because they render
   nothing: the hero's turquoise/purple circles sit behind an opaque `#6F2EB7`
   fill, and the Testimonial section's background layer is positioned at
